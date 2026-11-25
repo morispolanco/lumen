@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang='es'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <title>Lumen Clásico | Fragmentos clásicos para aprender</title>
+  <meta name='description' content='Buscador pedagógico de fragmentos clásicos adaptados al nivel educativo.'>
+  <link rel='preconnect' href='https://fonts.googleapis.com'>
+  <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+  <link href='https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap' rel='stylesheet'>
+  <link rel='stylesheet' href='css/style.css'>
+</head>
+<body>
+  <header class='site-header'>
+    <nav class='nav shell' aria-label='Navegación principal'>
+      <a class='brand' href='#top' aria-label='Lumen Clásico inicio'>
+        <span class='brand-mark'>LC</span>
+        <span><strong>Lumen Clásico</strong><small>Humanidades con rigor pedagógico</small></span>
+      </a>
+      <button class='nav-toggle' id='navToggle' aria-label='Abrir menú' aria-expanded='false'>☰</button>
+      <div class='nav-links' id='navLinks'>
+        <a href='#buscar'>Buscar</a>
+        <a href='#biblioteca'>Mi biblioteca</a>
+        <a href='#historial'>Historial</a>
+        <button class='btn btn-ghost' id='loginBtn'>Iniciar sesión</button>
+        <button class='btn btn-primary' id='logoutBtn' hidden>Cerrar sesión</button>
+      </div>
+    </nav>
+  </header>
+
+  <main id='top'>
+    <section class='hero shell'>
+      <div class='hero-copy'>
+        <span class='eyebrow'>EdTech · Humanidades · Aula</span>
+        <h1>Textos clásicos explicados para cada etapa educativa.</h1>
+        <p>Lumen Clásico ayuda a encontrar fragmentos auténticos de la tradición occidental y a convertirlos en fichas pedagógicas con contexto, justificación y actividades de reflexión.</p>
+        <div class='hero-actions'>
+          <a class='btn btn-primary btn-lg' href='#buscar'>Comenzar búsqueda</a>
+          <button class='btn btn-secondary btn-lg' id='sampleBtn'>Ver ejemplo</button>
+        </div>
+      </div>
+      <aside class='hero-card' aria-label='Ejemplo editorial'>
+        <p class='quote'>«No aprendemos para la escuela, sino para la vida.»</p>
+        <p class='cite'>Séneca, Cartas morales a Lucilio</p>
+        <div class='mini-grid'>
+          <span>Contexto</span><span>Relación conceptual</span><span>Guía didáctica</span>
+        </div>
+      </aside>
+    </section>
+
+    <section class='notice shell'>
+      <strong>Versión estática demostrativa.</strong> Esta interfaz está preparada para una integración server-side con Next.js, Neon y OpenRouter, pero aquí funciona sin backend usando datos locales de muestra.
+    </section>
+
+    <section class='search-section shell' id='buscar'>
+      <div class='section-heading'>
+        <span class='eyebrow'>Búsqueda guiada</span>
+        <h2>Encuentra un fragmento y su puente pedagógico</h2>
+        <p>Indica el tema, enfoque, nivel y época. Recibirás tarjetas con cita, contexto, justificación y preguntas para el aula.</p>
+      </div>
+      <form class='search-card' id='searchForm'>
+        <label class='field field-wide'>
+          <span>Tema o término de búsqueda</span>
+          <input id='query' name='query' type='text' required placeholder='Ej.: la justicia, la prudencia, el método empírico'>
+        </label>
+        <label class='field'>
+          <span>Categoría del enfoque</span>
+          <select id='category' name='category'>
+            <option>Concepto filosófico o humanístico</option>
+            <option>Principio o idea científica</option>
+            <option>Virtud ética o cívica</option>
+            <option>Enseñanza o lección práctica</option>
+          </select>
+        </label>
+        <label class='field'>
+          <span>Nivel educativo</span>
+          <select id='educationLevel' name='educationLevel'>
+            <option>Primaria</option>
+            <option>Secundaria / Ciclo Básico</option>
+            <option>Diversificado / Bachillerato</option>
+          </select>
+        </label>
+        <label class='field'>
+          <span>Tradición o época</span>
+          <select id='tradition' name='tradition'>
+            <option>Todas</option>
+            <option>Antigüedad grecolatina</option>
+            <option>Edad Media</option>
+            <option>Renacimiento y Siglo de Oro</option>
+            <option>Ilustración y Modernidad</option>
+          </select>
+        </label>
+        <button class='btn btn-primary submit-btn' type='submit'>Buscar fragmentos</button>
+      </form>
+    </section>
+
+    <section class='results shell' aria-live='polite'>
+      <div class='results-toolbar'>
+        <div>
+          <span class='eyebrow'>Resultados</span>
+          <h2 id='resultsTitle'>Fragmentos recomendados</h2>
+        </div>
+        <button class='btn btn-secondary' id='printAllBtn'>Imprimir resultados</button>
+      </div>
+      <div id='status' class='status'>Realiza una búsqueda para generar tarjetas pedagógicas.</div>
+      <div id='resultsGrid' class='results-grid'></div>
+    </section>
+
+    <section class='dashboard shell'>
+      <div class='panel' id='biblioteca'>
+        <div class='panel-head'>
+          <h2>Mi biblioteca</h2>
+          <button class='btn btn-ghost' id='clearLibraryBtn'>Vaciar</button>
+        </div>
+        <div id='libraryList' class='list empty'>Inicia sesión y guarda fragmentos para verlos aquí.</div>
+      </div>
+      <div class='panel' id='historial'>
+        <div class='panel-head'>
+          <h2>Historial de búsquedas</h2>
+          <button class='btn btn-ghost' id='clearHistoryBtn'>Limpiar</button>
+        </div>
+        <div id='historyList' class='list empty'>Tus búsquedas aparecerán en este panel.</div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class='auth-modal' id='authDialog'>
+    <form method='dialog' class='auth-box' id='authForm'>
+      <button class='modal-close' value='cancel' aria-label='Cerrar'>×</button>
+      <span class='eyebrow'>Cuenta local de demostración</span>
+      <h2>Entrar a Lumen Clásico</h2>
+      <p>En esta versión estática la sesión se guarda en el navegador. En producción debe usarse autenticación segura en servidor.</p>
+      <label class='field'><span>Nombre</span><input id='authName' type='text' placeholder='Nombre del usuario'></label>
+      <label class='field'><span>Correo electrónico</span><input id='authEmail' type='email' required placeholder='docente@colegio.edu'></label>
+      <label class='field'><span>Rol</span><select id='authRole'><option>docente</option><option>estudiante</option></select></label>
+      <button class='btn btn-primary' type='submit'>Guardar sesión</button>
+    </form>
+  </dialog>
+
+  <div class='toast' id='toast' role='status' aria-live='polite'></div>
+  <script src='js/script.js'></script>
+</body>
+</html>
