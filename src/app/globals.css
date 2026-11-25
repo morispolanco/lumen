@@ -4,21 +4,22 @@
 
 @layer base {
   html {
-    background-color: #faf8f5;
-    color: #1e1b18;
+    background-color: #faf7f0;
+    color: #17191c;
+    scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    background-color: #faf8f5;
-    color: #1e1b18;
+    background-color: #faf7f0;
+    color: #17191c;
     min-height: 100vh;
   }
 
   ::selection {
-    background-color: #fef3c7;
-    color: #1e1b18;
+    background-color: #eef2f9;
+    color: #152546;
   }
 }
 

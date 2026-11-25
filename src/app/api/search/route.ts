@@ -22,6 +22,27 @@ const searchInputSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const user = await getSessionUser();
+    if (!user) {
+      return NextResponse.json(
+        {
+          error:
+            "Debes iniciar sesión con una cuenta autorizada para utilizar el buscador de Lumen Clásico.",
+        },
+        { status: 401 }
+      );
+    }
+
+    if (!user.isAuthorized && user.role !== "admin") {
+      return NextResponse.json(
+        {
+          error:
+            "Tu cuenta está pendiente de autorización. El administrador debe habilitar tu acceso antes de realizar búsquedas.",
+        },
+        { status: 403 }
+      );
+    }
+
     const body: unknown = await request.json();
     const parsed = searchInputSchema.safeParse(body);
 
@@ -48,40 +69,37 @@ export async function POST(request: Request) {
 
     let historyId: string | undefined;
 
-    const user = await getSessionUser();
-    if (user) {
-      try {
-        const sql = getDb();
-        const inserted = await sql`
-          INSERT INTO search_history (
-            user_id,
-            query,
-            category,
-            education_level,
-            tradition,
-            results_json,
-            model_used
-          )
-          VALUES (
-            ${user.id},
-            ${query},
-            ${category},
-            ${educationLevel},
-            ${tradition},
-            ${JSON.stringify(fragmentos)}::jsonb,
-            ${modelUsed}
-          )
-          RETURNING id
-        `;
-        if (inserted[0]?.id) {
-          historyId = String(inserted[0].id);
-        }
-      } catch (dbError) {
-        console.error(
-          "[/api/search] No se pudo guardar en search_history:",
-          dbError
-        );
+    try {
+      const sql = getDb();
+      const inserted = await sql`
+        INSERT INTO search_history (
+          user_id,
+          query,
+          category,
+          education_level,
+          tradition,
+          results_json,
+          model_used
+        )
+        VALUES (
+          ${user.id},
+          ${query},
+          ${category},
+          ${educationLevel},
+          ${tradition},
+          ${JSON.stringify(fragmentos)}::jsonb,
+          ${modelUsed}
+        )
+        RETURNING id
+      `;
+      if (inserted[0]?.id) {
+        historyId = String(inserted[0].id);
       }
+    } catch (dbError) {
+      console.error(
+        "[/api/search] No se pudo guardar en search_history:",
+        dbError
+      );
     }
 
     return NextResponse.json({

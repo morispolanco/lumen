@@ -13,6 +13,12 @@ export async function GET(request: Request) {
       { status: 401 }
     );
   }
+  if (!user.isAuthorized && user.role !== "admin") {
+    return NextResponse.json(
+      { error: "Tu cuenta aún no ha sido autorizada por el administrador." },
+      { status: 403 }
+    );
+  }
 
   try {
     const { searchParams } = new URL(request.url);
@@ -55,9 +61,12 @@ export async function GET(request: Request) {
 export async function DELETE(request: Request) {
   const user = await getSessionUser();
   if (!user) {
+    return NextResponse.json({ error: "No autorizado." }, { status: 401 });
+  }
+  if (!user.isAuthorized && user.role !== "admin") {
     return NextResponse.json(
-      { error: "No autorizado." },
-      { status: 401 }
+      { error: "Tu cuenta aún no ha sido autorizada por el administrador." },
+      { status: 403 }
     );
   }
 

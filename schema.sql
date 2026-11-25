@@ -1,5 +1,5 @@
 -- =============================================================================
--- Lumen Clásico — Esquema inicial de base de datos para Neon (PostgreSQL)
+-- Lumen Clásico — Esquema inicial y migración idempotente para Neon (PostgreSQL)
 -- Ejecuta este script completo en el SQL Editor de tu proyecto en Neon.
 -- =============================================================================
 
@@ -12,11 +12,37 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(255) NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
   role VARCHAR(32) NOT NULL DEFAULT 'docente'
-    CHECK (role IN ('docente', 'estudiante')),
+    CHECK (role IN ('docente', 'estudiante', 'admin')),
   education_level_pref VARCHAR(32) NOT NULL DEFAULT 'secundaria'
     CHECK (education_level_pref IN ('primaria', 'secundaria', 'diversificado')),
+  is_authorized BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Migración segura si la tabla users ya existía previamente
+ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS is_authorized BOOLEAN NOT NULL DEFAULT FALSE;
+
+ALTER TABLE users
+  DROP CONSTRAINT IF EXISTS users_role_check;
+
+ALTER TABLE users
+  ADD CONSTRAINT users_role_check CHECK (role IN ('docente', 'estudiante', 'admin'));
+
+-- Cuenta administradora inicial (mp@ufm.edu)
+INSERT INTO users (name, email, password_hash, role, education_level_pref, is_authorized)
+VALUES (
+  'Administrador',
+  'mp@ufm.edu',
+  crypt('Mita1962!', gen_salt('bf', 10)),
+  'admin',
+  'diversificado',
+  TRUE
+)
+ON CONFLICT (email) DO UPDATE SET
+  role = 'admin',
+  is_authorized = TRUE,
+  password_hash = EXCLUDED.password_hash;
 
 -- 2. Tabla de historial de búsquedas pedagógicas
 CREATE TABLE IF NOT EXISTS search_history (
@@ -55,7 +81,10 @@ CREATE TABLE IF NOT EXISTS saved_fragments (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Índices para acelerar consultas del panel de usuario y filtros
+-- Índices para acelerar consultas del panel de usuario y administración
+CREATE INDEX IF NOT EXISTS idx_users_authorized_created
+  ON users (is_authorized, created_at DESC);
+
 CREATE INDEX IF NOT EXISTS idx_search_history_user_created
   ON search_history (user_id, created_at DESC);
 

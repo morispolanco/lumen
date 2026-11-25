@@ -13,7 +13,7 @@ export type ClassicalTradition =
   | "renacimiento"
   | "ilustracion";
 
-export type UserRole = "docente" | "estudiante";
+export type UserRole = "docente" | "estudiante" | "admin";
 
 export interface ClassicalFragment {
   fragmento: string;
@@ -52,7 +52,13 @@ export interface UserProfile {
   email: string;
   role: UserRole;
   educationLevelPref: EducationLevel;
+  isAuthorized: boolean;
   createdAt?: string;
+}
+
+export interface AdminUserRow extends UserProfile {
+  searchesCount: number;
+  savedCount: number;
 }
 
 export interface SavedFragmentRecord {
@@ -96,25 +102,29 @@ export const CATEGORY_OPTIONS: Array<{
     value: "concepto",
     label: "Concepto filosófico o humanístico",
     shortLabel: "Concepto humanístico",
-    description: "Ideas sobre el ser, el conocimiento, la libertad, el lenguaje o la ciudad.",
+    description:
+      "Ideas sobre el ser, el conocimiento, la libertad, el lenguaje o la ciudad.",
   },
   {
     value: "principio",
     label: "Principio o idea científica",
     shortLabel: "Principio científico",
-    description: "Observación de la naturaleza, método empírico, causalidad o leyes físicas.",
+    description:
+      "Observación de la naturaleza, método empírico, causalidad o leyes físicas.",
   },
   {
     value: "virtud",
     label: "Virtud ética o cívica",
     shortLabel: "Virtud ética / cívica",
-    description: "Hábitos del carácter, justicia, prudencia, templanza, amistad o deber cívico.",
+    description:
+      "Hábitos del carácter, justicia, prudencia, templanza, amistad o deber cívico.",
   },
   {
     value: "ensenanza",
     label: "Enseñanza o lección práctica",
     shortLabel: "Enseñanza práctica",
-    description: "Sabiduría vital, consejo prudencial, formación del criterio y vida cotidiana.",
+    description:
+      "Sabiduría vital, consejo prudencial, formación del criterio y vida cotidiana.",
   },
 ];
 
@@ -128,19 +138,22 @@ export const EDUCATION_LEVEL_OPTIONS: Array<{
     value: "primaria",
     label: "Primaria",
     ages: "6–12 años",
-    summary: "Lenguaje claro, concreto y cercano; fragmentos breves y accesibles.",
+    summary:
+      "Lenguaje claro, concreto y cercano; fragmentos breves y accesibles.",
   },
   {
     value: "secundaria",
     label: "Secundaria / Ciclo Básico",
     ages: "13–15 años",
-    summary: "Vocabulario intermedio, contexto histórico esencial y comprensión crítica.",
+    summary:
+      "Vocabulario intermedio, contexto histórico esencial y comprensión crítica.",
   },
   {
     value: "diversificado",
     label: "Diversificado / Bachillerato",
     ages: "16–18 años",
-    summary: "Rigor conceptual, lectura más extensa y análisis argumentativo.",
+    summary:
+      "Rigor conceptual, lectura más extensa y análisis argumentativo.",
   },
 ];
 
@@ -148,7 +161,7 @@ export const TRADITION_OPTIONS: Array<{
   value: ClassicalTradition;
   label: string;
 }> = [
-  { value: "todas", label: "Todas las épocas" },
+  { value: "todas", label: "Todas" },
   { value: "antiguedad", label: "Antigüedad grecolatina" },
   { value: "edad_media", label: "Edad Media" },
   { value: "renacimiento", label: "Renacimiento y Siglo de Oro" },

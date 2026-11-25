@@ -20,9 +20,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Lumen Clásico — Textos clásicos con rigor filológico y enfoque pedagógico",
+  title: "Lumen Clásico — Textos clásicos explicados para cada etapa educativa",
   description:
-    "Busca, justifica y explica pedagógicamente fragmentos auténticos de textos clásicos de la cultura occidental adaptados a Primaria, Secundaria y Diversificado.",
+    "Encuentra fragmentos auténticos de la tradición occidental y conviértelos en fichas pedagógicas con contexto, justificación y actividades de reflexión.",
 };
 
 export default function RootLayout({
@@ -36,14 +36,14 @@ export default function RootLayout({
         <AuthProvider>
           <Navbar />
           <main className="flex-1">{children}</main>
-          <footer className="no-print border-t border-parchment-200 bg-parchment-100/60 mt-16">
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-ink-500">
+          <footer className="no-print border-t border-parchment-200 bg-ivory/80 mt-16">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-7 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-ink-500">
               <div className="flex items-center gap-2">
-                <span className="font-serif text-base font-semibold text-crimson-700">
+                <span className="font-serif text-base font-semibold text-navy-700">
                   Lumen Clásico
                 </span>
                 <span>·</span>
-                <span>Humanidades y pedagogía en diálogo con los clásicos</span>
+                <span>Humanidades con rigor pedagógico</span>
               </div>
               <p className="text-center sm:text-right">
                 Citas verificadas con transparencia filológica · Pensado para el aula

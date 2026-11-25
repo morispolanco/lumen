@@ -12,10 +12,10 @@
 
 ## Pila tecnológica
 
-- **Framework:** Next.js 14 (App Router), TypeScript y Tailwind CSS
+- **Framework:** Next.js 16 (App Router), TypeScript y Tailwind CSS
 - **Base de datos:** Neon (PostgreSQL serverless) mediante `@neondatabase/serverless`
 - **IA:** OpenRouter API (Route Handler de servidor)
-- **Despliegue:** Optimizado para Vercel (Node.js 20+)
+- **Despliegue:** Optimizado para Vercel (Node.js 22.x)
 
 ---
 
@@ -78,7 +78,7 @@ git push -u origin main
 Si deseas ejecutar el proyecto en tu equipo antes de desplegar:
 
 ```bash
-# 1. Instala dependencias (requiere Node.js 20+)
+# 1. Instala dependencias (requiere Node.js 22.x)
 npm install
 
 # 2. Crea tu archivo local de variables de entorno
@@ -96,7 +96,6 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 ```text
 .
 ├── .env.example
-├── .eslintrc.json
 ├── .gitignore
 ├── README.md
 ├── next.config.mjs

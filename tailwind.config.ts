@@ -10,26 +10,29 @@ const config: Config = {
     extend: {
       colors: {
         parchment: {
-          50: "#FAF8F5",
-          100: "#F4EFE6",
-          200: "#E8E0D1",
-          300: "#D8CCB8",
+          50: "#FAF7F0",
+          100: "#F4EFE4",
+          200: "#E8E0D0",
+          300: "#D8CEBA",
         },
+        ivory: "#FCFBF7",
         ink: {
-          900: "#1E1B18",
-          700: "#3D3730",
-          500: "#635A4F",
-          400: "#857A6C",
+          900: "#17191C",
+          700: "#373B42",
+          500: "#5E626A",
+          400: "#858077",
         },
-        crimson: {
-          700: "#7C2D12",
-          800: "#63220D",
-          50: "#FDF4F0",
+        navy: {
+          700: "#253F73",
+          800: "#1C315A",
+          900: "#152546",
+          50: "#EEF2F9",
         },
-        ochre: {
-          600: "#B45309",
-          100: "#FEF3C7",
-          50: "#FFFBEB",
+        gold: {
+          700: "#7F5F26",
+          600: "#947132",
+          100: "#F7EEDB",
+          50: "#FBF7EC",
         },
       },
       fontFamily: {
@@ -37,7 +40,8 @@ const config: Config = {
         sans: ["var(--font-inter)", "system-ui", "-apple-system", "sans-serif"],
       },
       boxShadow: {
-        editorial: "0 1px 3px rgba(30, 27, 24, 0.05), 0 8px 24px rgba(30, 27, 24, 0.04)",
+        editorial:
+          "0 1px 2px rgba(23, 25, 28, 0.04), 0 10px 28px rgba(37, 63, 115, 0.05)",
       },
     },
   },

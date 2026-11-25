@@ -55,13 +55,13 @@ export async function POST(request: Request) {
 
     const passwordHash = await hashPassword(password);
     const inserted = await sql`
-      INSERT INTO users (name, email, password_hash, role, education_level_pref)
-      VALUES (${name}, ${normalizedEmail}, ${passwordHash}, ${role}, ${educationLevelPref})
-      RETURNING id, name, email, role, education_level_pref, created_at
+      INSERT INTO users (name, email, password_hash, role, education_level_pref, is_authorized)
+      VALUES (${name}, ${normalizedEmail}, ${passwordHash}, ${role}, ${educationLevelPref}, FALSE)
+      RETURNING id, name, email, role, education_level_pref, is_authorized, created_at
     `;
 
     const user = inserted[0];
-    setSessionCookie(String(user.id), String(user.email));
+    await setSessionCookie(String(user.id), String(user.email));
 
     return NextResponse.json(
       {
@@ -71,6 +71,7 @@ export async function POST(request: Request) {
           email: String(user.email),
           role: user.role,
           educationLevelPref: user.education_level_pref,
+          isAuthorized: Boolean(user.is_authorized),
           createdAt: user.created_at,
         },
       },

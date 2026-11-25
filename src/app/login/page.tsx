@@ -38,7 +38,7 @@ export default function LoginPage() {
       }
 
       setUser(data.user);
-      router.push("/panel");
+      router.push(data.user.role === "admin" ? "/admin" : "/");
       router.refresh();
     } catch (err) {
       setError(
@@ -53,9 +53,12 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto px-4 sm:px-6 py-14">
-      <div className="bg-white border border-parchment-200 rounded-2xl p-7 sm:p-8 shadow-editorial">
+      <div className="bg-ivory border border-parchment-200 rounded-[26px] p-7 sm:p-8 shadow-editorial">
         <div className="text-center mb-6">
-          <h1 className="font-serif text-3xl font-semibold text-ink-900">
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-gold-600 mb-2">
+            ACCESO PERSONAL
+          </p>
+          <h1 className="font-serif text-3xl font-bold text-ink-900">
             Iniciar sesión
           </h1>
           <p className="text-sm text-ink-500 mt-1.5">
@@ -65,7 +68,7 @@ export default function LoginPage() {
         </div>
 
         {error && (
-          <div className="mb-5 rounded-xl bg-red-50 border border-red-200 px-4 py-3 flex items-start gap-2.5 text-sm text-red-900">
+          <div className="mb-5 rounded-2xl bg-red-50 border border-red-200 px-4 py-3 flex items-start gap-2.5 text-sm text-red-900">
             <AlertCircle className="w-4 h-4 text-red-700 shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
@@ -75,7 +78,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="login-email"
-              className="block text-sm font-medium text-ink-900 mb-1.5"
+              className="block text-xs font-bold text-ink-900 mb-1.5"
             >
               Correo electrónico
             </label>
@@ -87,14 +90,14 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="docente@institucion.edu"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-parchment-300 bg-parchment-50/50 text-sm text-ink-900 focus:outline-none focus:ring-2 focus:ring-crimson-700/25 focus:border-crimson-700"
+              className="w-full px-4 py-2.5 rounded-2xl border border-parchment-200 bg-white text-sm text-ink-900 focus:outline-none focus:ring-2 focus:ring-navy-700/20 focus:border-navy-700"
             />
           </div>
 
           <div>
             <label
               htmlFor="login-password"
-              className="block text-sm font-medium text-ink-900 mb-1.5"
+              className="block text-xs font-bold text-ink-900 mb-1.5"
             >
               Contraseña
             </label>
@@ -106,14 +109,14 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-parchment-300 bg-parchment-50/50 text-sm text-ink-900 focus:outline-none focus:ring-2 focus:ring-crimson-700/25 focus:border-crimson-700"
+              className="w-full px-4 py-2.5 rounded-2xl border border-parchment-200 bg-white text-sm text-ink-900 focus:outline-none focus:ring-2 focus:ring-navy-700/20 focus:border-navy-700"
             />
           </div>
 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-crimson-700 text-white text-sm font-semibold hover:bg-crimson-800 transition-colors disabled:opacity-60"
+            className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-navy-700 text-white text-sm font-semibold hover:bg-navy-800 transition-colors disabled:opacity-60 shadow-sm"
           >
             <LogIn className="w-4 h-4" />
             {submitting ? "Verificando..." : "Entrar a Lumen Clásico"}
@@ -124,7 +127,7 @@ export default function LoginPage() {
           ¿Aún no tienes cuenta?{" "}
           <Link
             href="/registro"
-            className="font-semibold text-crimson-700 hover:underline"
+            className="font-semibold text-navy-700 hover:underline"
           >
             Crear cuenta gratuita
           </Link>

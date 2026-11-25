@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     const sql = getDb();
 
     const rows = await sql`
-      SELECT id, name, email, password_hash, role, education_level_pref, created_at
+      SELECT id, name, email, password_hash, role, education_level_pref, is_authorized, created_at
       FROM users
       WHERE email = ${normalizedEmail}
       LIMIT 1
@@ -56,8 +56,9 @@ export async function POST(request: Request) {
       );
     }
 
-    setSessionCookie(String(user.id), String(user.email));
+    await setSessionCookie(String(user.id), String(user.email));
 
+    const isAdmin = user.role === "admin";
     return NextResponse.json({
       user: {
         id: String(user.id),
@@ -65,6 +66,7 @@ export async function POST(request: Request) {
         email: String(user.email),
         role: user.role,
         educationLevelPref: user.education_level_pref,
+        isAuthorized: isAdmin ? true : Boolean(user.is_authorized),
         createdAt: user.created_at,
       },
     });

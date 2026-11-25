@@ -95,9 +95,13 @@ export function verifySessionToken(token: string): SessionPayload | null {
   }
 }
 
-export function setSessionCookie(userId: string, email: string): void {
+export async function setSessionCookie(
+  userId: string,
+  email: string
+): Promise<void> {
   const token = createSessionToken(userId, email);
-  cookies().set(SESSION_COOKIE_NAME, token, {
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -106,8 +110,9 @@ export function setSessionCookie(userId: string, email: string): void {
   });
 }
 
-export function clearSessionCookie(): void {
-  cookies().set(SESSION_COOKIE_NAME, "", {
+export async function clearSessionCookie(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE_NAME, "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -118,7 +123,7 @@ export function clearSessionCookie(): void {
 
 export async function getSessionUser(): Promise<UserProfile | null> {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
     if (!token) return null;
 
@@ -127,7 +132,7 @@ export async function getSessionUser(): Promise<UserProfile | null> {
 
     const sql = getDb();
     const rows = await sql`
-      SELECT id, name, email, role, education_level_pref, created_at
+      SELECT id, name, email, role, education_level_pref, is_authorized, created_at
       FROM users
       WHERE id = ${payload.userId}
       LIMIT 1
@@ -136,13 +141,15 @@ export async function getSessionUser(): Promise<UserProfile | null> {
     if (!rows || rows.length === 0) return null;
 
     const row = rows[0];
+    const role = (row.role as UserRole) || "docente";
     return {
       id: String(row.id),
       name: String(row.name),
       email: String(row.email),
-      role: (row.role as UserRole) || "docente",
+      role,
       educationLevelPref:
         (row.education_level_pref as EducationLevel) || "secundaria",
+      isAuthorized: role === "admin" ? true : Boolean(row.is_authorized),
       createdAt: row.created_at ? String(row.created_at) : undefined,
     };
   } catch {
