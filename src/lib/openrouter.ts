@@ -10,65 +10,61 @@ import {
 } from "@/types/lumen";
 
 const fragmentSchema = z.object({
-  fragmento: z.string().min(20),
+  fragmento: z.string().min(10),
   autor: z.string().min(2),
   obra: z.string().min(2),
   epoca: z.string().min(2),
   referencia: z.string().min(2),
-  es_parafrasis: z.boolean(),
-  explicacion_nivel: z.string().min(30),
-  justificacion_seleccion: z.string().min(30),
-  explicacion_relacion: z.string().min(40),
-  guia_didactica: z.array(z.string().min(8)).min(2).max(4),
+  es_parafrasis: z.boolean().default(false),
+  explicacion_nivel: z.string().min(15),
+  justificacion_seleccion: z.string().min(15),
+  explicacion_relacion: z.string().min(15),
+  guia_didactica: z.array(z.string().min(5)).min(1).max(4),
 });
 
 const openRouterResponseSchema = z.object({
-  fragmentos: z.array(fragmentSchema).min(2).max(3),
+  fragmentos: z.array(fragmentSchema).min(1).max(3),
 });
 
 const LEVEL_INSTRUCTIONS: Record<EducationLevel, string> = {
   primaria:
-    "NIVEL PRIMARIA (6–12 años): Usa lenguaje claro, concreto, cálido y cercano. Elige fragmentos breves y comprensibles (aprox. 25–65 palabras). Explica las ideas con ejemplos cotidianos de la escuela, la familia o los amigos, evitando tecnicismos innecesarios. La guía didáctica debe incluir 2 o 3 preguntas sencillas o una breve actividad participativa.",
+    "NIVEL PRIMARIA (6–12 años): Usa lenguaje claro, concreto, cálido y cercano. Elige fragmentos breves y comprensibles (25–65 palabras). Explica las ideas con ejemplos cotidianos de la escuela, la familia o los amigos. La guía didáctica debe incluir 2 o 3 preguntas sencillas o una breve actividad participativa.",
   secundaria:
-    "NIVEL SECUNDARIA / CICLO BÁSICO (13–15 años): Usa vocabulario intermedio y preciso. Elige fragmentos de extensión moderada (aprox. 50–110 palabras). Incluye el contexto histórico esencial del autor y la obra, fomenta la comprensión crítica y explica las metáforas o argumentos clave. La guía didáctica debe proponer 2 o 3 preguntas de análisis crítico o un mini-debate en clase.",
+    "NIVEL SECUNDARIA / CICLO BÁSICO (13–15 años): Usa vocabulario intermedio y preciso. Elige fragmentos de extensión moderada (50–100 palabras). Incluye el contexto histórico esencial del autor y la obra, y explica las metáforas o argumentos clave. La guía didáctica debe proponer 2 o 3 preguntas de análisis crítico.",
   diversificado:
-    "NIVEL DIVERSIFICADO / BACHILLERATO (16–18 años): Usa rigor conceptual y terminología filosófica, histórica o científica adecuada. Elige fragmentos más extensos y sustanciosos (aprox. 80–160 palabras). Desarrolla el contexto intelectual de la obra y realiza un análisis argumentativo preciso de las premisas del pasaje. La guía didáctica debe incluir 2 o 3 preguntas de discusión profunda o una consigna breve de comentario de texto.",
+    "NIVEL DIVERSIFICADO / BACHILLERATO (16–18 años): Usa rigor conceptual y terminología filosófica, histórica o científica adecuada. Elige fragmentos sustanciosos (75–140 palabras). Desarrolla el contexto intelectual y analiza las premisas del pasaje. La guía didáctica debe incluir 2 o 3 preguntas de discusión o comentario de texto.",
 };
 
-const SYSTEM_PROMPT = `Eres un filólogo clásico, historiador de las ideas y especialista en didáctica de las humanidades y de la ciencia en lengua española. Tu misión en la plataforma educativa «Lumen Clásico» es seleccionar, presentar con rigor textual, justificar y explicar pedagógicamente entre 2 y 3 fragmentos auténticos de textos clásicos de la cultura occidental que ilustren un tema buscado por un docente o estudiante.
+const SYSTEM_PROMPT = `Eres un filólogo clásico, historiador de las ideas y especialista en didáctica de las humanidades y de la ciencia en lengua española. Tu misión en «Lumen Clásico» es seleccionar, presentar con rigor textual, justificar y explicar pedagógicamente entre 2 y 3 fragmentos auténticos de textos clásicos de la cultura occidental que ilustren un tema buscado.
 
 REGLAS ESTRICTAS DE VERACIDAD FILOLÓGICA:
-1. Cita ÚNICAMENTE autores y obras reales de la cultura occidental (por ejemplo: Homero, Esopo, Hesíodo, Heráclito, Sófocles, Eurípides, Tucídides, Hipócrates, Platón, Aristóteles, Euclides, Arquímedes, Cicerón, Lucrecio, Virgilio, Horacio, Séneca, Epicteto, Quintiliano, Plutarco, Marco Aurelio, San Agustín, Boecio, Tomás de Aquino, Dante Alighieri, Petrarca, Erasmo de Róterdam, Juan Luis Vives, Michel de Montaigne, Miguel de Cervantes, Francis Bacon, Galileo Galilei, René Descartes, Blaise Pascal, Baltasar Gracián, Isaac Newton, John Locke, Montesquieu, David Hume, Immanuel Kant, entre otros autores clásicos verificables).
-2. Indica SIEMPRE: autor, título de la obra en español (y título original si ayuda), época o siglo, y ubicación aproximada verificable (libro, capítulo, carta, diálogo, sección o canto).
-3. PROHIBIDO INVENTAR CITAS, OBRAS O ATRIBUCIONES FALSAS. Si no recuerdas con certeza la traducción literal exacta de una edición publicada, presenta una traducción fiel y rigurosa del pasaje real que sí conoces y marca OBLIGATORIAMENTE "es_parafrasis": true. Marca "es_parafrasis": false únicamente cuando se trate de una traducción literal fiel y reconocida del pasaje original.
-4. En el campo "fragmento", emplea comillas angulares « » cuando corresponda (por ejemplo, para citas internas o diálogos) y cuida la ortografía y puntuación según la norma de la RAE.
+1. Cita ÚNICAMENTE autores y obras reales de la cultura occidental (Homero, Esopo, Platón, Aristóteles, Cicerón, Séneca, Quintiliano, Marco Aurelio, San Agustín, Tomás de Aquino, Dante, Juan Luis Vives, Cervantes, Galileo, Descartes, Newton, Baltasar Gracián, Kant, etc.).
+2. Indica SIEMPRE: autor, título de la obra, época o siglo, y ubicación aproximada verificable (libro, capítulo, carta, diálogo o canto).
+3. PROHIBIDO INVENTAR CITAS. Si no recuerdas la traducción literal exacta, presenta una traducción fiel del pasaje real y marca "es_parafrasis": true.
+4. En "fragmento", emplea comillas angulares « » cuando corresponda.
 
 EXIGENCIA CENTRAL DE JUSTIFICACIÓN Y RELACIÓN PEDAGÓGICA:
-5. No basta con citar el texto y resumirlo. Para cada fragmento debes:
-   - En "justificacion_seleccion": argumentar explícitamente POR QUÉ elegiste este autor y este pasaje concreto frente a otros posibles para enseñar el tema en ese nivel escolar.
-   - En "explicacion_relacion": explicar con precisión CÓMO se conecta el fragmento con el tema y enfoque buscados, citando palabras clave, metáforas, premisas o acciones concretas del propio texto (entre comillas angulares « ») para demostrar el puente lógico, traducido al nivel educativo solicitado. Evita generalidades vagas.
-   - En "explicacion_nivel": explicar claramente el sentido literal y el contexto histórico/intelectual del fragmento, redactado específicamente para la edad del estudiante.
-   - En "guia_didactica": incluir un arreglo de 2 o 3 preguntas de reflexión o una actividad breve sugerida para el aula que refuerce precisamente ese puente conceptual.
+5. Para cada fragmento debes incluir:
+   - "justificacion_seleccion": por qué elegiste este pasaje y autor frente a otros posibles para enseñar el tema en ese nivel escolar.
+   - "explicacion_relacion": cómo se conecta el fragmento con el tema y enfoque buscados, citando palabras clave, metáforas, premisas o acciones concretas del propio pasaje (entre comillas angulares « »).
+   - "explicacion_nivel": sentido literal y contexto histórico/intelectual adaptado a la edad del estudiante.
+   - "guia_didactica": arreglo de 2 o 3 preguntas de reflexión o actividad breve para el aula.
 
 FORMATO DE SALIDA OBLIGATORIO:
-Devuelve EXCLUSIVAMENTE un objeto JSON válido (sin texto adicional antes ni después, sin bloques markdown) con esta estructura exacta:
+Devuelve EXCLUSIVAMENTE un objeto JSON válido (sin texto antes ni después, sin bloques markdown) con esta estructura:
 {
   "fragmentos": [
     {
       "fragmento": "Texto clásico...",
       "autor": "Nombre del autor",
       "obra": "Título de la obra",
-      "epoca": "Época y siglo (ej. Antigüedad clásica, s. IV a. C.)",
-      "referencia": "Ubicación precisa (ej. Libro V, cap. 1, 1129b)",
+      "epoca": "Época y siglo",
+      "referencia": "Ubicación precisa",
       "es_parafrasis": false,
-      "explicacion_nivel": "Explicación clara del sentido literal y contexto adaptada al nivel...",
-      "justificacion_seleccion": "Argumento de por qué se eligió este pasaje frente a otros posibles...",
-      "explicacion_relacion": "Análisis detallado del vínculo citando expresiones concretas del fragmento...",
-      "guia_didactica": [
-        "Pregunta o actividad 1...",
-        "Pregunta o actividad 2...",
-        "Pregunta o actividad 3..."
-      ]
+      "explicacion_nivel": "Explicación adaptada al nivel...",
+      "justificacion_seleccion": "Por qué este pasaje...",
+      "explicacion_relacion": "Cómo se relaciona citando expresiones del texto...",
+      "guia_didactica": ["Pregunta 1", "Pregunta 2", "Pregunta 3"]
     }
   ]
 }`;
@@ -93,16 +89,40 @@ function extractJsonObject(rawText: string): string {
   return trimmed;
 }
 
+function supportsJsonObjectFormat(model: string): boolean {
+  const lower = model.toLowerCase();
+  return (
+    lower.startsWith("openai/") ||
+    lower.startsWith("google/") ||
+    lower.startsWith("deepseek/")
+  );
+}
+
 async function callSingleOpenRouterModel(params: {
   model: string;
   apiKey: string;
   appUrl: string;
   userPrompt: string;
+  timeoutMs: number;
 }): Promise<ClassicalFragment[]> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 55000);
+  const timeoutId = setTimeout(() => controller.abort(), params.timeoutMs);
 
   try {
+    const payload: Record<string, unknown> = {
+      model: params.model,
+      temperature: 0.35,
+      max_tokens: 2200,
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: params.userPrompt },
+      ],
+    };
+
+    if (supportsJsonObjectFormat(params.model)) {
+      payload.response_format = { type: "json_object" };
+    }
+
     const response = await fetch(
       "https://openrouter.ai/api/v1/chat/completions",
       {
@@ -113,16 +133,7 @@ async function callSingleOpenRouterModel(params: {
           "HTTP-Referer": params.appUrl,
           "X-Title": "Lumen Clasico",
         },
-        body: JSON.stringify({
-          model: params.model,
-          temperature: 0.35,
-          max_tokens: 3400,
-          response_format: { type: "json_object" },
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: params.userPrompt },
-          ],
-        }),
+        body: JSON.stringify(payload),
         signal: controller.signal,
       }
     );
@@ -130,7 +141,7 @@ async function callSingleOpenRouterModel(params: {
     if (!response.ok) {
       const errorBody = await response.text().catch(() => "");
       throw new Error(
-        `OpenRouter respondió con estado ${response.status} (${params.model}): ${errorBody.slice(0, 240)}`
+        `OpenRouter devolvió HTTP ${response.status} con ${params.model}: ${errorBody.slice(0, 220)}`
       );
     }
 
@@ -140,7 +151,9 @@ async function callSingleOpenRouterModel(params: {
     };
 
     if (data.error?.message) {
-      throw new Error(`Error de OpenRouter (${params.model}): ${data.error.message}`);
+      throw new Error(
+        `OpenRouter (${params.model}): ${data.error.message}`
+      );
     }
 
     const rawContent = data.choices?.[0]?.message?.content;
@@ -153,6 +166,13 @@ async function callSingleOpenRouterModel(params: {
     const validated = openRouterResponseSchema.parse(parsedJson);
 
     return validated.fragmentos;
+  } catch (err) {
+    if (err instanceof Error && err.name === "AbortError") {
+      throw new Error(
+        `El modelo ${params.model} superó el tiempo de espera (${Math.round(params.timeoutMs / 1000)}s).`
+      );
+    }
+    throw err;
   } finally {
     clearTimeout(timeoutId);
   }
@@ -168,17 +188,17 @@ export async function searchClassicalFragments(params: {
   modelUsed: string;
   usedFallback: boolean;
 }> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY?.trim();
   if (!apiKey) {
     throw new Error(
-      "Falta la variable de entorno OPENROUTER_API_KEY en el servidor."
+      "Falta la variable de entorno OPENROUTER_API_KEY en Vercel."
     );
   }
 
   const primaryModel =
-    process.env.OPENROUTER_PRIMARY_MODEL?.trim() || "anthropic/claude-3.5-sonnet";
+    process.env.OPENROUTER_PRIMARY_MODEL?.trim() || "google/gemini-2.5-flash";
   const fallbackModel =
-    process.env.OPENROUTER_FALLBACK_MODEL?.trim() || "google/gemini-2.5-pro";
+    process.env.OPENROUTER_FALLBACK_MODEL?.trim() || "openai/gpt-4o-mini";
   const appUrl =
     process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://lumen-clasico.vercel.app";
 
@@ -193,7 +213,7 @@ export async function searchClassicalFragments(params: {
     `Nivel educativo destino: ${getEducationLevelLabel(params.educationLevel)}`,
     LEVEL_INSTRUCTIONS[params.educationLevel],
     `Filtro de tradición o época: ${traditionInstruction}`,
-    `Devuelve entre 2 y 3 fragmentos clásicos distintos (de autores diferentes cuando sea posible) en el formato JSON especificado.`,
+    `Devuelve entre 2 y 3 fragmentos clásicos distintos en el formato JSON especificado.`,
   ].join("\n\n");
 
   try {
@@ -202,6 +222,7 @@ export async function searchClassicalFragments(params: {
       apiKey,
       appUrl,
       userPrompt,
+      timeoutMs: 24000,
     });
     return { fragmentos, modelUsed: primaryModel, usedFallback: false };
   } catch (primaryError) {
@@ -219,6 +240,7 @@ export async function searchClassicalFragments(params: {
       apiKey,
       appUrl,
       userPrompt,
+      timeoutMs: 24000,
     });
     return { fragmentos, modelUsed: fallbackModel, usedFallback: true };
   }

@@ -114,16 +114,14 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("[/api/search] Error:", error);
-    const message =
+    const rawMsg =
       error instanceof Error
         ? error.message
         : "Ocurrió un error al consultar los textos clásicos.";
 
     return NextResponse.json(
       {
-        error:
-          "No se pudieron recuperar fragmentos clásicos en este momento. Intenta de nuevo en unos segundos.",
-        detail: process.env.NODE_ENV === "development" ? message : undefined,
+        error: `No se pudieron recuperar fragmentos clásicos: ${rawMsg}`,
       },
       { status: 502 }
     );

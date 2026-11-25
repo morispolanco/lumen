@@ -124,13 +124,21 @@ export function SearchWorkspace() {
         }),
       });
 
-      const data = (await response.json()) as SearchApiResponse & {
-        error?: string;
-      };
-
-      if (!response.ok) {
+      const rawText = await response.text();
+      let data: (SearchApiResponse & { error?: string }) | null = null;
+      try {
+        data = JSON.parse(rawText) as SearchApiResponse & { error?: string };
+      } catch {
         throw new Error(
-          data.error ||
+          response.status === 504
+            ? "La consulta superó el tiempo límite del servidor en Vercel. Intenta de nuevo o configura un modelo más rápido (como google/gemini-2.5-flash) en OPENROUTER_PRIMARY_MODEL."
+            : `El servidor devolvió una respuesta inesperada (HTTP ${response.status}). Revisa las variables de entorno en Vercel (OPENROUTER_API_KEY, DATABASE_URL, AUTH_SECRET).`
+        );
+      }
+
+      if (!response.ok || !data) {
+        throw new Error(
+          data?.error ||
             "No fue posible recuperar fragmentos clásicos en este momento."
         );
       }
